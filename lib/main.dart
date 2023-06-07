@@ -1,3 +1,5 @@
+import 'package:chess/routes.dart';
+import 'package:chess/src/page/board_page.dart';
 import 'package:flutter/material.dart';
 import 'package:stockfish/stockfish.dart';
 
@@ -25,74 +27,88 @@ class _AppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Stockfish example app'),
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: AnimatedBuilder(
-                animation: stockfish.state,
-                builder: (_, __) => Text(
-                  'stockfish.state=${stockfish.state.value}',
-                  key: const ValueKey('stockfish.state'),
-                ),
-              ),
+      routes: routes,
+      home: Builder(
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Stockfish example app'),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: AnimatedBuilder(
-                animation: stockfish.state,
-                builder: (_, __) => ElevatedButton(
-                  onPressed: stockfish.state.value == StockfishState.disposed
-                      ? () {
-                          final newInstance = Stockfish();
-                          setState(() => stockfish = newInstance);
-                        }
-                      : null,
-                  child: const Text('Reset Stockfish instance'),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                autocorrect: false,
-                decoration: const InputDecoration(
-                  labelText: 'Custom UCI command',
-                  hintText: 'go infinite',
-                ),
-                onSubmitted: (value) => stockfish.stdin = value,
-                textInputAction: TextInputAction.send,
-              ),
-            ),
-            Wrap(
+            body: Column(
               children: [
-                'd',
-                'isready',
-                'go infinite',
-                'go movetime 3000',
-                'stop',
-                'quit',
-              ]
-                  .map(
-                    (command) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () => stockfish.stdin = command,
-                        child: Text(command),
-                      ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AnimatedBuilder(
+                    animation: stockfish.state,
+                    builder: (_, __) => Text(
+                      'stockfish.state=${stockfish.state.value}',
+                      key: const ValueKey('stockfish.state'),
                     ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    child: const Text("UI Design 1"),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(BoardPage.routeName);
+                    },
                   )
-                  .toList(growable: false),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AnimatedBuilder(
+                    animation: stockfish.state,
+                    builder: (_, __) => ElevatedButton(
+                      onPressed: stockfish.state.value == StockfishState.disposed
+                          ? () {
+                              final newInstance = Stockfish();
+                              setState(() => stockfish = newInstance);
+                            }
+                          : null,
+                      child: const Text('Reset Stockfish instance'),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    autocorrect: false,
+                    decoration: const InputDecoration(
+                      labelText: 'Custom UCI command',
+                      hintText: 'go infinite',
+                    ),
+                    onSubmitted: (value) => stockfish.stdin = value,
+                    textInputAction: TextInputAction.send,
+                  ),
+                ),
+                Wrap(
+                  children: [
+                    'd',
+                    'isready',
+                    'go infinite',
+                    'go movetime 3000',
+                    'stop',
+                    'quit',
+                  ]
+                      .map(
+                        (command) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            onPressed: () => stockfish.stdin = command,
+                            child: Text(command),
+                          ),
+                        ),
+                      )
+                      .toList(growable: false),
+                ),
+                Expanded(
+                  child: OutputWidget(stockfish.stdout),
+                ),
+              ],
             ),
-            Expanded(
-              child: OutputWidget(stockfish.stdout),
-            ),
-          ],
-        ),
+          );
+        }
       ),
     );
   }
