@@ -1,4 +1,5 @@
 import 'package:chess/constants.dart';
+import 'package:chess/src/common/stateless/piece_widget.dart';
 import 'package:flutter/cupertino.dart';
 
 class TileWidget extends StatelessWidget {
@@ -15,6 +16,7 @@ class TileWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: color
       ),
+      child: Piece(side: Side.white, type: ChessPiece.king,),
     );
   }
 }
