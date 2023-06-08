@@ -21,7 +21,7 @@ class _AppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    stockfish = Stockfish();
+    //stockfish = Stockfish();
   }
 
   @override
@@ -30,6 +30,7 @@ class _AppState extends State<MyApp> {
       routes: routes,
       home: Builder(
         builder: (context) {
+          return BoardPage();
           return Scaffold(
             appBar: AppBar(
               title: const Text('Stockfish example app'),
