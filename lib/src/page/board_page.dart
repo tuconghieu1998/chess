@@ -30,9 +30,9 @@ class _BoardPageState extends State<BoardPage> {
     return board;
   }
 
-  List<Widget> renderRow(List<String> rowConfig, int col, double size) {
+  List<Widget> renderRow(List<String> rowConfig, int rowIndex, double size) {
     List<Color> colors = [];
-    if(col%2 == 0) {
+    if(rowIndex%2 == 0) {
       colors.add(AppColor.whiteTile);
       colors.add(AppColor.blackTile);
     }
@@ -43,9 +43,67 @@ class _BoardPageState extends State<BoardPage> {
     
     List<Widget> row = [];
     for(int col =1;col<=8;col++) {
-      row.add(TileWidget(size: size, color: colors[col%2], typePiece: rowConfig[col - 1],));
+      row.add(TileWidget(
+        size: size,
+        color: colors[col%2],
+        typePiece: rowConfig[col - 1],
+        isSuggest: boardSuggestion[col -1][rowIndex - 1],
+        onTap: () {
+          onTapTile(Point(col, rowIndex));
+        }));
     }
     return row;
+  }
+
+  bool isTileEmpty(Point pos) {
+    return board[pos.x ?? 0][pos.y ?? 0] == "";
+  }
+
+  onTapTile(Point pos) {
+    List<Point> tileCanMove = ChessLogic.getListTypeCanMove(pos);
+    print(tileCanMove.length);
+    setState(() {
+      if(isTileEmpty(pos)) {
+        isSuggesting = false;
+      }
+      else {
+        isSuggesting = true;
+      }
+      // clear all suggest tile
+      for(int i = 0;i<board.length;i++) {
+        for (var j = 0; j < board[i].length; j++) {
+          boardSuggestion[i][j] = false;
+        }
+      }
+
+      // show suggest tile
+      if(isSuggesting) {
+        print("suggest"); 
+        for(Point pos in tileCanMove) {
+        boardSuggestion[pos.x ?? 0][pos.y ?? 0] = true;
+      }
+      }      
+    });
+    
+  } 
+
+  late List<List<String>> board;
+  late List<List<bool>> boardSuggestion;
+  late bool isSuggesting;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isSuggesting = false;
+    board = ChessLogic.initChessBoard();
+    boardSuggestion = [];
+    for(int i = 0;i<board.length;i++) {
+      boardSuggestion.add([]);
+      for (var j = 0; j < board[i].length; j++) {
+        boardSuggestion[i].add(false);
+      }
+    }
   }
 
   @override
@@ -59,7 +117,7 @@ class _BoardPageState extends State<BoardPage> {
       body: Padding(
         padding: const EdgeInsets.only(top: 20),
         child: Column(
-          children: renderBoard(ChessLogic.initChessBoard()),),
+          children: renderBoard(board),),
       )
     );
   }
