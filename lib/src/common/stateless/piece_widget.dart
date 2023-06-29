@@ -14,6 +14,7 @@ class Piece extends StatelessWidget {
 
 
   String? getAssetByType() {
+    print("getAssetByType $side $type");
     return mapAssetPiece[side]![type];
   }
 

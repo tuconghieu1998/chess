@@ -21,7 +21,7 @@ class _AppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    //stockfish = Stockfish();
+    // stockfish = Stockfish();
   }
 
   @override

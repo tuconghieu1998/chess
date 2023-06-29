@@ -1,5 +1,6 @@
 import 'package:chess/color_constants.dart';
 import 'package:chess/src/common/stateless/tile_widget.dart';
+import 'package:chess/src/logic/logic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -15,7 +16,7 @@ class BoardPage extends StatefulWidget {
 
 class _BoardPageState extends State<BoardPage> {
   
-  List<Widget> renderBoard() {
+  List<Widget> renderBoard(List<List<String>> boardConfig) {
     double size = (MediaQuery.of(context).size.width - 30) / 8;
     if (size > 100) {
       size = 100;
@@ -24,12 +25,12 @@ class _BoardPageState extends State<BoardPage> {
     for(int row =8;row>0;row--) {
       board.add(Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: renderRow(row, size),));
+        children: renderRow(boardConfig[row - 1], row, size),));
     }
     return board;
   }
 
-  List<Widget> renderRow(int col, double size) {
+  List<Widget> renderRow(List<String> rowConfig, int col, double size) {
     List<Color> colors = [];
     if(col%2 == 0) {
       colors.add(AppColor.whiteTile);
@@ -41,8 +42,8 @@ class _BoardPageState extends State<BoardPage> {
     }
     
     List<Widget> row = [];
-    for(int col =8;col>0;col--) {
-      row.add(TileWidget(size: size, color: colors[col%2],));
+    for(int col =1;col<=8;col++) {
+      row.add(TileWidget(size: size, color: colors[col%2], typePiece: rowConfig[col - 1],));
     }
     return row;
   }
@@ -58,7 +59,7 @@ class _BoardPageState extends State<BoardPage> {
       body: Padding(
         padding: const EdgeInsets.only(top: 20),
         child: Column(
-          children: renderBoard(),),
+          children: renderBoard(ChessLogic.initChessBoard()),),
       )
     );
   }

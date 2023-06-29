@@ -8,7 +8,8 @@ enum ChessPiece {
   rook,
   bishop,
   knight,
-  pawn
+  pawn,
+  empty
 }
 
 enum Side {
